@@ -39,6 +39,14 @@ KnexQuery.prototype.orderBy = function (column, order) {
   return this;
 };
 
+KnexQuery.prototype.offset = function(value, options) {
+  if (!value) {
+    throw new Error('Offset requires value');
+  }
+  this.offsetValue = value;
+  if(options) this.offsetOptions = options;
+}
+
 KnexQuery.prototype.exec = function () {
   let self = this;
   let thequery = this.knex(this.main_table).select();
@@ -59,6 +67,8 @@ KnexQuery.prototype.exec = function () {
     });
 
     if(this.limit > 0) thequery = thequery.limit(this.limit);
+
+    if(this.offsetValue) thequery = thequery.offset(this.offsetValue, this.offsetOptions);
 
     return blah.call(this, thequery);
   }
